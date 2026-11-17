@@ -1,59 +1,31 @@
 {
-  "name": "shopify-nextjs-prisma-app",
-  "version": "2026.10.23",
-  "type": "module",
-  "author": {
-    "name": "Harshdeep Singh Hura",
-    "url": "https://harshdeephura.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/kinngh/shopify-nextjs-prisma-app.git"
-  },
+  "name": "shopify-app-starter-pro",
+  "version": "1.0.0",
+  "description": "Production-ready modern Shopify embedded app boilerplate with Next.js, Prisma, multi-shop support and local developer sandbox.",
+  "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "pretty": "prettier --write ./",
-    "update": "ncu -u",
-    "-----> Tunnel <-----": "",
-    "cloudflare": "cloudflared tunnel --url localhost:3000",
-    "-----> Shopify <-----": "",
-    "g:install": "npm i -g @shopify/cli@latest",
-    "shopify": "shopify",
-    "update:config": "node _developer/tomlWriter.js; npm run pretty; shopify app deploy;",
-    "-----> Database <-----": "",
-    "pg:create": "mkdir database; pg_ctl -D database init",
-    "pg:start": "pg_ctl -D database start",
-    "pg:stop": "pg_ctl -D database stop",
-    "db:create": "mkdir database; mysqld --initialize-insecure --datadir=./database",
-    "db:start": "mysqld --datadir=./database",
-    "db:stop": "mysqladmin shutdown",
-    "-----> Prisma <-----": "",
-    "prisma": "npx prisma",
-    "prisma:push": "npx prisma db push",
-    "prisma:pull": "npx prisma db pull",
-    "-----> Reserved Scripts <-----": "",
-    "prepare": "npx prisma generate"
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "config:generate": "node scripts/generate-toml.mjs",
+    "test": "node test/run-tests.mjs"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.10.1",
-    "@prisma/client": "^7.10.1",
-    "@shopify/polaris": "^13.9.5",
-    "@shopify/shopify-api": "^15.0.1",
-    "cryptr": "^6.4.0",
-    "dotenv": "^18.0.9",
-    "next": "16.4.3",
-    "next-api-middleware": "^3.0.0",
-    "pg": "^8.23.1",
-    "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "@prisma/client": "^5.14.0",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@iarna/toml": "^2.2.5",
-    "@shopify/polaris-types": "^2.0.0",
-    "npm-check-updates": "^23.1.1",
-    "prettier": "^3.9.10",
-    "prisma": "^7.10.1"
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "prisma": "^5.14.0",
+    "typescript": "^5.4.5"
   }
 }

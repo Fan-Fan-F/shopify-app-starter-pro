@@ -1,27 +1,77 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma Schema for Shopify App Starter Pro
+// Supports SQLite for zero-config local development and PostgreSQL/MySQL for production.
 
 generator client {
-  provider = "prisma-client"
-  output   = "client"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
-model stores {
-  shop     String   @id
-  isActive Boolean? @default(false)
+model Shop {
+  id            String         @id @default(cuid())
+  shop          String         @unique // e.g. "my-store.myshopify.com"
+  name          String?
+  email         String?
+  currency      String?        @default("USD")
+  isActive      Boolean        @default(true)
+  installedAt   DateTime       @default(now())
+  uninstalledAt DateTime?
+  updatedAt     DateTime       @updatedAt
+  
+  sessions      Session[]
+  settings      AppSetting[]
+  webhookEvents WebhookEvent[]
 
   @@index([shop])
 }
 
-model session {
-  id      String  @id
-  content String? @db.Text
-  shop    String?
+model Session {
+  id               String    @id // Shopify session ID
+  shop             String
+  state            String?
+  isOnline         Boolean   @default(false)
+  scope            String?
+  expires          DateTime?
+  accessToken      String
+  onlineAccessInfo String?   // JSON string of user details for online tokens
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  @@index([id])
+  shopRelation     Shop?     @relation(fields: [shop], references: [shop], onDelete: Cascade)
+
   @@index([shop])
+}
+
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  topic       String   // e.g. "customers/data_request", "app/uninstalled"
+  shop        String
+  webhookId   String?  // Header: x-shopify-webhook-id
+  apiVersion  String?  // Header: x-shopify-api-version
+  payload     String   // Raw body or parsed JSON
+  status      String   @default("PROCESSED") // PROCESSED, FAILED, IGNORED
+  error       String?
+  createdAt   DateTime @default(now())
+
+  shopRelation Shop?   @relation(fields: [shop], references: [shop], onDelete: Cascade)
+
+  @@index([shop, topic])
+  @@index([createdAt])
+}
+
+model AppSetting {
+  id        String   @id @default(cuid())
+  shopId    String
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shop      Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@unique([shopId, key])
+  @@index([shopId])
 }
